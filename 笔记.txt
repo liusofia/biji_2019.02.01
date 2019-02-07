@@ -1,0 +1,98 @@
+1:《更强大的滚动控件-RecyclerView》
+listView弊端:
+不得不使用特殊的技巧来提升他的运行效率，listView性能很差;
+listView扩展性不好，只能实现纵向滚动效果，做不到实现横向滚动效果
+RecyclerView的基本用法:
+a:需要在build.gradle中添加相应的依赖库才行
+
+注意:RecyclerView并不是内置在系统的SDK当中，所以需要把完整的包路径写出来。
+import android.support.v7.widget.RecyclerView;
+
+b:横向滚动：
+在item中将layout变成: android:orientation="vertical"
+在Activity中添加: lm.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+c:瀑布流布局：
+StaggeredGridLayoutManager可用于实现瀑布流布局，为了将不同的icon宽度凸显出来使用了getRandomLengthName方法
+
+RecyclerView的点击事件
+需要自己的子项具体的View去注册点击事件(可以分别从具体的控件开始进行点击操作和整体view的点击操作)
+
+---------------------------------------------------------------------------------------
+Nine-Patch 图片
+能够指定哪些区域可以被拉伸，哪些区域不可以。
+上边框和左边框绘制部分表示当图片需要拉伸时就拉伸黑点标记区域;
+右边框和下边框绘制部分表示内容会被放置的区域。
+---------------------------------------------------------------------------------------
+手机平板要兼顾
+Fragment是可以嵌入在活动中的UI片段，可以让程序更加充分合理的利用大屏幕空间，因而在平板上应用的很广泛。
+两个不同包名下的Fragment,一个是系统内置的android.app.Fragment，一个是support-v4库中的android.support.v4.app.Fragment(用这个)因为它可以让Fragment在所有Android系统版本中功能保持一致～
+
+使用：
+使用<fragment>标签布局需要指定android.name属性来显示指明要添加的Fragment类名，包名加类名
+
+注意：
+在activity.xml中引用fragment.xml的时候使用属性<fragment>必须指明id
+ 
+
+Framelayout是一种最简单的布局，所有控件默认会摆放在布局的左上角
+
+另一种注册点击事件的方法：
+implements View.OnClickListener{
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button:
+                replaceFragment(new AnotherRightFragment());
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+动态加载Fragment
+1:创建待添加的碎片实例(AnotherRightFragment)
+2:获取FragmentManager,在Activity中可以直接使用getSupportFragmentManager()方法得到
+3:开启一个FragmentTransaction ,通过beginTransaction开启
+4:向transaction中添加或替换Fragment,一般使用replace方法，需参数1容器id,参数2Fragment对象实例
+5:调用commit()方法来完成。
+
+调用replaceFragment(new RightFragment());
+具体实现:
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.right_layout,fragment);
+        transaction.commit();
+    }
+
+1:Activity中获取 Fragment
+在Activity中获取Fragment的实例:
+//这个id=right_fragment是在activity_layout中的id
+RightFragment rightFragment = (RightFragment)getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+//这样获得Fragment的实例就可以获得Fragment中的的方法了
+
+2:在Fragment中调用Activity
+2.1:先获得Activity在Fragment中的实例
+MainActivity activity = (MainActivity)getActivity();
+
+3:Fragment与Fragment通信
+Fragment -> Activity ->Fragment
+---------------------------------------------------------------------------------------
+Fragment的生命周期
+Activity中的回调方法Fragment都有除此之外还有一些附加的回调方法
+1:onAttach() -> 当Fragment与Activity建立关联时候调用
+2:onCreateView() -> 为Fragment创建视图(加载布局)时调用
+3:onActivityCreated() -> 确保与Fragment相关连的Activity已经创建完毕
+4:onDestroyView() -> 与Fragment相关连的视图被移除时调用
+5:onDetach() -> 当Fragment与Activity解除关联的时候调用 
+---------------------------------------------------------------------------------------
+动态加载布局技巧
+使用限定符->程序能够根据设备的分辨率或屏幕大小在运行时来决定加载哪个布局
+比如在res 文件中添加文件layout-large
+当是平板时候选用layout-large路径下的
+当时手机设备时候选用layout路径下的
+
+
+
