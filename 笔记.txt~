@@ -267,7 +267,57 @@ public void save(String inputText){
         }
     }
 ---------------------------------------------------------------------------------------
+读取文件中的数据
+openFileInput()方法，用于从文件中读取数据，接收一个参数，即要读取的文件名～然后会自动到/data/data/package name/files/目录中去加载这个文件，并返回一个FileInputStream对象，得到这个对象后再通过java流方式读取数据就好了
 
+小技能
+1:setSelection()方法将输入光标移动到文本的末尾位置，以便于继续数据
+2:对字符串进行非空判断使用TextUtils.isEmpty(),它的优势是可以一次性进行两种空值判断，当传入的字符串为null或等于空字符串的时候，这个方法都会返回true
 
-
+从文件中获取数据
+    public String load(){
+        FileInputStream in = null;
+        BufferedReader read = null;
+        StringBuilder content = new StringBuilder();
+        try{
+            //1:得到一个FileInputstream对象
+            //它会在/data/data/<package name>/file路径下找这个文件
+            in = openFileInput("data");
+            read = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = read.readLine()) != null){
+                content.append(line);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            if(read != null){
+                try{
+                    read.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return content.toString();
+    }
+---------------------------------------------------------------------------------------
+写数据
+FileOutputStream out = null;
+BufferedWriter writer = null;
+out = openFileOutput("data", Context.MODE_PRIVATE);
+writer = new BufferedWriter(new OutputStreamWriter(out));
+writer.write(inputText);
+记得close()
+读数据
+FileInputStream in = null;
+BufferedReader read = null;
+StringBuilder content = new StringBuilder();
+in = openFileInput("data");
+read = new BufferedReader(new InputStreamReader(in));
+String line = "";
+while ((line = read.readLine()) != null){
+     content.append(line);
+}
+return content.toString();
 
