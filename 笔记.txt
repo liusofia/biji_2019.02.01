@@ -232,7 +232,7 @@ AndroidDeveloper:
 
 Android提供三种功能用于简单数据持久化功能，文件存储，SharedPreference 存储及数据库存储
 
-文件存储:
+文件存储:	
 适用场景:存储一些简单的文本数据或二进制数据～
 特点:
 1：它不对存储的内容进行任何的格式化处理～所有数据都是原封不动地保存到文件中～
@@ -321,3 +321,21 @@ while ((line = read.readLine()) != null){
 }
 return content.toString();
 ---------------------------------------------------------------------------------------
+第二种数据存储方式:
+SharedPreferences存储
+使用键值对的方式存储数据，当保存一条数据时候需要给数据提供一个对应的键，这样读取数据时候通过这个键把相应的值取出来～
+SharedPreferences支持多种不同的数据类型
+
+1：将数据存储到SharedPreferences中 
+1.1:首先获得SharedPreferences对象，三种方式 Context类中getSharedPrefernces()方法 
+1.2:Activity类中的getPreferences() 方法 
+1.3:PreferenceManager类中的getDefaultSharedPreferences() 方法 
+
+SharedPreferences是通过XML对数据进行管理的～
+
+从SharedPreference中读取数据
+
+
+
+
+
