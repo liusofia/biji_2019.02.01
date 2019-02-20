@@ -344,12 +344,16 @@ SharedPreferences是通过XML对数据进行管理的～
 SQLiteOpenHelper中有两个抽象方法，分别是onCreate()和onUpdate(),我们在自己的帮助类中重写这两个方法，然后分别在这两个方法中去实现创建，升级数据库的逻辑。
 
 4:SQLiteOpenHelper中有两个实例方法:getReadableDatabase()和getWritableDatabase();这两个方法作用:创建或打开一个现有的数据库(如果数据库已存在则直接打开，否则创建一个新的数据库)并返回一个可对数据进行读写操作的对象;不同的是当数据库不可写入的时候(如磁盘已满),getReadableDatabase()方法返回的对象将以只读的方式去打开数据库，而getWriteableDatabase()方法出现异常。
-
-
-
-
-
-
+打开数据库
+# sqlite3 BookStore.db 
+查看表
+#sqlite> .table
+查看建表语句
+#sqlite> .schema
+退出
+#sqlite> .exit
+#sqlite> .quit
+---------------------------------------------------------------------------------------
 
 
 
