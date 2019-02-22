@@ -364,5 +364,5 @@ CRUD(Create/Retrive/Update/Delete)
 sqlite> select * from Book;
 1|miao haha|222.0|800|hahaji
 2|miao haha2|900.0|810|hahaji2
-
+---------------------------------------------------------------------------------------
 
