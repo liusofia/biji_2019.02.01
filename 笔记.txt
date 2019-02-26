@@ -394,6 +394,11 @@ LitePal是一款开源Android数据库框架，采用对象关系映射(ORM)的�
 向表中添加数据
 创建模型类的实例，将所有要存储的数据设置好，调用save(),这时候需要继承DataSupport类
 
+4:
+向表中更新数据
+setPrice()
+updateAll()[这里可以指定一个约束条件]
+
 
 
 
