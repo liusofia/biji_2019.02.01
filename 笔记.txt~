@@ -398,9 +398,15 @@ LitePal是一款开源Android数据库框架，采用对象关系映射(ORM)的�
 向表中更新数据
 setPrice()
 updateAll()[这里可以指定一个约束条件]
+注意：如果想要将数据更新成默认值，使用setToDefault()方法参数使用属性名称如:book.setToDefault("pages");
 
+5:
+从表中删除数据
+调用DataSupport.deleteAll()方法来删除数据，第一个参数用于指定删除那张表中的数据，Book.class意味着删除Book表中的数据，后面参数用于指定约束条件，如果不指定参数则删除所有数据，与updateAll()方法类似
 
-
+6:
+查找数据
+findAll返回值是一个Book类型的List集合
 
 
 
