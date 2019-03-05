@@ -439,8 +439,39 @@ Uri.parse()将内容Uri解析成Uri对象
 Demo:读取系统联系人
 
 创建内容提供器：
-如果实现跨进程共享数据功能，官方推荐就是使用内容提供器，ContentProvider类中有6个抽象方法，需全部重写分别是onCreate();
-query();insert();update();delete();getType()
+如果实现跨进程共享数据功能，官方推荐就是使用内容提供器，ContentProvider类中有6个抽象方法，需全部重写分别是
+onCreate();query();insert();update();delete();getType()
+步骤:
+一个标准的内容Uri写法:
+content://com.example.app.provider/table1 -> 表示访问"com.example.app.provider"应用程序的"table1"表数据
+content://com.example.app.provider/table1/1 -> 表示访问"com.example.app.privider"应用程序的"table1"表数据中id为1
+使用通配符匹配的方式匹配这两种格式的内容Uri:
+"*" -> 匹配任意长度字符
+"#" -> 表示匹配任意长度的数字
+所以，一个可以匹配任意表中的内容Uri:
+content://com.example.app.provider/*
+所以，一个可以匹配table表中的任意数据:
+content://com.example.app.provider/table1/#
+
+实现匹配内容Uri功能：
+使用UriMatcher.addURI()方法，接收三个参数(authority,path,自定义代码)
+
+getType()方法：
+这是所有内容提供器都必须提供的一个方法，用于获取Uri对象所对应的MIME类型，一个内容URI 所对应的MIME字符串主要有三部分组成，Android对这3部分做了如下格式规定:
+1:以vnd开头
+2:如果内容URI以路径结尾，后接"android.cursor.dir/",如果内容URI以id结尾，则后接"android.cursor.item/";
+3:最后接"vnd.<authority>.<path>";
+
+例如:对于"content://com.example.app.provider/table1"对应的MIME类型就可以写成:
+vnd.android.cursor.dir/vnd.com.example.app.provider.table1;
+例如:对于"content://com.example.app.provider.table1/1"对应的MIME类型可写成:
+vnd.android.cursor.item/vnd.com.example.app.provider.table1
+----------------------------------------------------------------------------------------------------------------------
+实现跨进程数据共享的功能
+跨进程访问不能使用Toast
+在Database程序中实现自己的内容提供器，在Providertest程序中可以通过内容提供器进行访问
+----------------------------------------------------------------------------------------------------------------------
+
 
 
 
