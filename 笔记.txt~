@@ -513,6 +513,24 @@ Messsage,Handler,MessageQueue和Looper;
 1:在主线程中创建一个Handler对象，重写handlerMessage()方法，当子线程需要进行UI操作时，创建一个Message对象，并通过Handler将这条消息发送出去，会进入到MessageQueue等待被处理，Looper会一直尝试从MessageQueue中取出待处理消息分发到Handler的handlerMessage中，由于Handler是在主线程中创建的所以handlerMessage方法也会在主线程中运行，就可以安心进行UI操作了；
 
 使用AsyncTask:
+AsyncTask的基本用法:由于AsyncTask是一个抽象类，所以如果我们想使用它就必须创建一个子类去继承它；在继承使我们可以为AsyncTask类指定三个泛型参数，这三个参数的用途如下：
+1：Params:在执行AsyncTask时需要传入的参数，可用于在后台任务中使用；
+2：Progress:如果在后台任务执行时需要在界面显示当前的进度，则使用这个指定的泛型作为进度单位；
+3：Result:当任务执行完毕后，如果需要对结果进行返回，使用这里指定的泛型作为返回值类型；
+一个简单的自定义写成如下方式:
+class DownloadTask extends AsyncTask<void ,Integer, Boolean>{
+}
+1:void 表示不需要传入任何参数给后台；
+2:使用整型作为进度显示的单位；
+3:使用Boolean 作为反馈结果；
+去重写AsyncTask中的方法才能完成对任务的定制:
+1:onPreExecute():在后台任务开始执行之前调用，用于进行一些界面上的初始化操作，比如显示进度条对话框等；
+2:doInBackground(Params...):
+去处理所有耗时任务，任务一旦完成就可以通过return语句来将任务的执行结果返回；
+3:onProgressUpdate(Progress...):
+当在后台任务重调用了publishProgress(Progress...)后，onProgressUpdate(Progress...)就很快被调用，该方法中携带的参数就是后台任务中传递过来的，在这个方法中可以对UI进行操作，利用参数的数值就可以对界面元素进行相应的更新；
+4:onPostExecute(Result):
+当后台任务执行完毕并通过return 返回时，这个方法很快被调用，返回的数据会作为参数传递到此方法中，可以利用这个返回的数据来进行一些UI操作，比如提醒任务执行的结果，关闭进度条对对话框等；
 
 ----------------------------------------------------------------------------------------------------------------------
 
