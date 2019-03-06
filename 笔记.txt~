@@ -471,6 +471,52 @@ vnd.android.cursor.item/vnd.com.example.app.provider.table1
 跨进程访问不能使用Toast
 在Database程序中实现自己的内容提供器，在Providertest程序中可以通过内容提供器进行访问
 ----------------------------------------------------------------------------------------------------------------------
+服务：
+Android中实现程序后台运行的解决方案：不需要和用户交互又耗时的任务，服务不是运行在一个独立的进程当中，而是依赖于创建服务时所在的应用程序进程，当应用程序被杀掉时，依赖该进程的服务也停止了。
+不要被服务后台概念所迷惑，服务不会自动开线程，所有代码都是默认运行在主线程中；这就需要我们在服务中开启线程，否则主线程就会出现被阻塞的情况。
+
+多线程：
+比如发起一条网络请求就需要开启多线程；Android多线程并不比Java多线程特殊，都是使用相同的语法；
+方式1：定义一个线程继承Thread,重写父类的run()方法，并在里面写耗时逻辑即可；如何启动一个线程呢？调用start()方法这样run()方法中的代码就会在子线程中运行了：
+new MyThread().start();
+方式2：
+使用继承的方式耦合性有点高，更多的时候我们需要使用实现Runnalbe接口的方式来定义一个线程；
+class MyThread implements Runnable{
+	@Override
+	public void run(){
+		
+	}
+}
+使用这种写法启动线程的方式也需要修改一下
+MyThread myThread = new MyThread();
+new Thread(myThread).start();
+方式3：
+可以使用匿名类的方式，更常见：
+new Thread(new Runnable(){
+	@Override
+	public void run(){
+		//处理具体逻辑
+	}
+}).start();
+
+多线程变成Android与java不同之处：
+因为Android不允许在主线程中更新UI,但有些时候我们必须在子线程里去执行一些耗时任务，然后根据任务的执行结果来更新相应的UI控件，针对这种情况，Android提供一套一步消息处理机制；
+原理:
+四个组成部分:
+Messsage,Handler,MessageQueue和Looper;
+1：Message是在线程之间传递的消息，它可以在内部携带少量的信息；还有arg1,arg2,来携带一些整型数据，obj字段携带一个Object对象；
+2：Handler:消息处理者，使用sendMessage()方法发送消息，发送到handleMesssage()中进行消息处理；
+3：MessageQueue:用于存放所有通过Handler发送的消息的一个消息队列，消息会一直在消息队列中等待被处理；每个线程只有一个消息队列；
+4：Looper:每个线程中的MessageQueue的管家，在调用Looper的loop()方法后，就会进入到一个无限循环当中，每当发现MessageQueue中存在一条消息就将它取出，传递到Handler的handlerMessage方法中，每个线程中也只会有一个Looper对象；
+
+异步消息梳理:
+1:在主线程中创建一个Handler对象，重写handlerMessage()方法，当子线程需要进行UI操作时，创建一个Message对象，并通过Handler将这条消息发送出去，会进入到MessageQueue等待被处理，Looper会一直尝试从MessageQueue中取出待处理消息分发到Handler的handlerMessage中，由于Handler是在主线程中创建的所以handlerMessage方法也会在主线程中运行，就可以安心进行UI操作了；
+
+使用AsyncTask:
+
+----------------------------------------------------------------------------------------------------------------------
+
+
 
 
 
