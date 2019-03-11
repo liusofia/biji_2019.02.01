@@ -499,8 +499,8 @@ new Thread(new Runnable(){
 	}
 }).start();
 
-多线程变成Android与java不同之处：
-因为Android不允许在主线程中更新UI,但有些时候我们必须在子线程里去执行一些耗时任务，然后根据任务的执行结果来更新相应的UI控件，针对这种情况，Android提供一套一步消息处理机制；
+多线程编程Android与java不同之处：
+因为Android不允许在主线程中更新UI,但有些时候我们必须在子线程里去执行一些耗时任务，然后根据任务的执行结果来更新相应的UI控件，针对这种情况，Android提供一套异步消息处理机制；
 原理:
 四个组成部分:
 Messsage,Handler,MessageQueue和Looper;
@@ -533,8 +533,20 @@ class DownloadTask extends AsyncTask<void ,Integer, Boolean>{
 当后台任务执行完毕并通过return 返回时，这个方法很快被调用，返回的数据会作为参数传递到此方法中，可以利用这个返回的数据来进行一些UI操作，比如提醒任务执行的结果，关闭进度条对对话框等；
 想要启动这个任务：new DownloadTask().execute();
 ----------------------------------------------------------------------------------------------------------------------
-
-
+Service:
+一：启动和停止服务
+1:onBind():service中唯一需要在子类中实现的抽象方法；
+最常用的三个方法：
+2:onCreate():在服务创建时调用
+3:onStartCommand():在服务启动时调用，通常我们希望服务一启动就执行的操作我们写在onStartCommand中
+4:onDestroy():在服务销毁时调用
+5:四大组件都需要在AndroidManifest.xml中进行注册;
+6:注意完全由activity来决定service何时停止的，服务有没有办法让自己停止下来呢？当然有，只需要在MyService的任何一个位置调用stopSelf(),就能让Service自己停下来
+7:注意:当Service已经启动后如果我们不停地点击startServic按钮会发现onCreate只会被调用一次但onStartCommand会被调用多次。
+二：Activity和Service
+虽然服务是在活动中启动的，但是服务启动后就与活动没什么关系了，
+如何让activity和service关系更紧密呢？
+2.1：创建ServiceConnection 重写onServiceConnected和onServiceDisconnected()方法，这两个方法会在活动和服务绑定时候调用和接触绑定时候调用，在onServiceConnected方法中，通过向下转型得到DownloadBinder实例，活动和服务之间的关系就变得非常紧密了，因为可以通过binder调用DownloadBinder中的任何一个方法。
 
 
 
