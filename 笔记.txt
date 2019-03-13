@@ -588,7 +588,99 @@ public class MyIntentService extends IntentService{
 		super.onDestroy();
 	}
 }
+----------------------------------------------------------------------------------------------------------------------
+1：获取全局Context 技巧：
+2：使用Intent 传递对象:
+2.1：使用Intent 传递对象的方式一：Serializable和Parcclable(Serializable使用方式简单但会把整个对象进行序列化效率低)
+其中Serializable 是序列化的意思，表示将一个对象转换成可存储或可传输状态，序列化后对象可以在网络上进行传输，也可以存储在本地，序列化的方式是需要一个类实现Serializable这个接口；
+public class Person implements Serilizable{
+	private String name;
+	private int age;
+	public String getName(){
+		return name;
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public int getAge(){
+		return age;
+	}
+	
+	public void setAge(int age){
+		this.age = age;
+	}
+}
 
+Person person = new Person();
+person.setName("Tom");
+person.setAge(20);
+Intent intent = new Intent(FirstActivity.this,SecondActivity.class);
+intent.putExtra("person_data",person);
+//看到这个传递person对象，因为Person类实现了Serializable接口才可以这样写；
+startActivity(intent);
+
+×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+//获取对象
+Person person = (Person)getIntent().getSerializableExtra("person_data");
+----------------------------------------------------------------------------------------------------------------------
+2.2:使用parcelable方式
+Parcelable方式的实现原理是将一个完整的对象进行分解，而分解后的每一个部分Intent所支持的数据类型，这样也就实时传递对象的功能；
+步骤a：首先使Person类实现Parcelable类，重写writeToParcel和describeContents(直接返回0即可)接口；
+步骤b：在writeToParcel接口中需要一一将Person类中的字段写出来；
+步骤c：在Person类中提供一个CREATOR的常量，创建一个Parcelable.Creator接口，并指定泛型为Person,重写createFromParcel()和newArray()两个方法，在createFromParcel注意这里顺序一定要和写时候的顺序一致
+步骤d：在SecondActivity中获取对象
+Person person = (Person)getIntent().getParcelableExtra("person_data");
+
+public class Person implements Parcelable{
+	private String name;
+	private int age;
+	public String getName(){
+		return name;
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public int getAge(){
+		return age;
+	}
+	
+	public void setAge(int age){
+		this.age = age;
+	}
+	
+	@Override
+	public int describeContents(){
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel dest,int flags){
+		dest.writeString(name);
+		dest.writeInt(age);
+	}
+	
+	public static final Parcelable.Creator<Person> CREATOR = new Parcelable.Creator<Person>{
+		@Override
+		public Person createFromParcel(Parcel source){
+		//注意这里顺序一定要和写时候的顺序一致
+			Person person = new Person();
+			person.name = source.readString();
+			person.age = source.readInt();
+			return person;
+		}
+		
+		@Override
+		public Person[] newArray(int size){
+			return new Person[size];
+		}
+	};
+	
+}
+----------------------------------------------------------------------------------------------------------------------
 
 
 
