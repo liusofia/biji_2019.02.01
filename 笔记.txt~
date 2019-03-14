@@ -681,6 +681,32 @@ public class Person implements Parcelable{
 	
 }
 ----------------------------------------------------------------------------------------------------------------------
+创建定时任务：
+方式1：Timer类
+方式2：使用Android的Alarm机制，我们都知道为了能让电池更加内用，每种手机都会有自己的休眠策略，Android会在长时间不操作的情况下自动让cpu进入到休眠状态，这就导致Timer中的定时任务无法正常运行，而Alarm 具有唤醒cpu的功能，保证大多数情况下需要定时执行任务时候cpu都能正常工作(唤醒cpu和唤醒屏幕完全不是一个概念)
+
+方式2：Alarm 机制：借助AlarmManager类来实现，这个类和NotificationManager有点类似，都是通过调用getSystemService()方法获取实例的，只是在这里传入的参数是Context.ALARM_SERVICE.因此获取一个AlarmManager实例就可以写成：
+AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+接下来调用AlarmManager的set方法就可以设置一个定时任务了；比如设置一个10秒钟的任务：
+long triggerAtTime = SystemClock.elapsedRealtime() + 10 * 1000;
+manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,pendingIntent);
+注意set中传递的三个参数有点复杂：
+第一个参数：整型参数，用于指定AlarmManager的工作类型(ELAPSED_REALTIME,ELAPSED_REALTIME_WAKEUP,RTC,RTC_WAKEUP)
+ELAPSED_REALTIME:表示让定时任务的出发时间从系统开机算起但不会唤醒cpu;
+ELAPSED_REALTIME_WAKEUP:表示让定时任务的出发时间从系统开机算起，但会唤醒cpu;
+RTC表示让定时任务的出发时间从1970.01.01的零时开始算起，但不会唤醒cpu;
+RTC_WAKEUP同样表示让定时任务的出发时间从1970.01.01的零时开始算起，但会唤醒cpu;
+而使用SystemClock.elapsedRealtime()方法可以获取到系统开机至今所经理时间的毫秒数；
+使用System.currentTimeMillis()方法可以获取到1970.01.01零点至今所经理时间的毫秒数；
+
+第二个参数：定时任务出发的时间，以毫秒为单位；
+如果第一个参数是ELAPSED_REALTIME、ELAPSED_REALTIME_WAKEUP则第二个参数传入开机时间加上延迟执行的时间，如果第一个参数使用的是
+RTC,RTC_WAKEUP，则第二个参数传入的是1970.01.01加上延迟执行的时间；
+
+第三个参数是PendingIntent,这里一般我们会调用getService方法或者getBroadcast方法来获取一个能够执行服务或广播的PendingIntent,这样当定时任务被触发的时候，u的onStartCommand()方法或广播接收器的onReceive方法就可以得到执行；
+例如：设定一个任务在10秒钟后执行：
+
+
 
 
 
